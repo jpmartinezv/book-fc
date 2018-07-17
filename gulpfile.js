@@ -1,8 +1,8 @@
-var gulp = require('gulp');
-var livereload = require('gulp-livereload');
-var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var sourcemaps = require('gulp-sourcemaps');
+const gulp = require('gulp');
+const livereload = require('gulp-livereload');
+const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
+const sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('styles', function () {
     gulp.src('./sass/**/*.scss')
