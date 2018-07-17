@@ -1,0 +1,17 @@
+{
+  "name": "gulp-generator",
+  "version": "1.0.0",
+  "description": "Gulp generator",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-cache": "^1.0.2",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.4"
+  },
+  "dependencies": {
+    "topojson": "^3.0.2"
+  }
+}
