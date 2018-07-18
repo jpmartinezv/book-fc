@@ -130,9 +130,11 @@ const BFC = (parameters) => {
                 return color;
             });
 
+        let curr_pag = 71;
+
         // Marker
         self.g_nav.append('rect')
-            .attr('x', 0)
+            .attr('x', (curr_pag - 1) * item_width)
             .attr('y', -5)
             .attr('width', item_width)
             .attr('height', nav_height + 10)
@@ -168,7 +170,7 @@ const BFC = (parameters) => {
             d3.select(this).classed("active", false);
         }
 
-        self.updatePage(71, pages[71]);
+        self.updatePage(curr_pag, pages[curr_pag]);
     }
 
     self.updatePage = (p, data) => {
