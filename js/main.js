@@ -1,3 +1,5 @@
+
+
 const BFC = (parameters) => {
     const self = {};
 
@@ -33,7 +35,7 @@ const BFC = (parameters) => {
         self.g_page = self.svg.append('g')
             .attr("transform", "translate(" + (self.width / 2 - self.page_width / 2) + ", " + 0 + ")");
 
-        const marker = self.svg.append('defs')
+        self.svg.append('defs')
             .append('marker').attr('id', 'arrow')
             .attr('viewBox', '0 0 10 10')
             .attr('refX', 0)
@@ -41,9 +43,7 @@ const BFC = (parameters) => {
             .attr('markerWidth', 5)
             .attr('markerHeight', 5)
             .attr('viewBox', '-6 -6 12 12')
-            .attr('orient', 'auto');
-
-        marker
+            .attr('orient', 'auto')
             .append('path')
             .attr("d", 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0');
     }
@@ -156,7 +156,7 @@ const BFC = (parameters) => {
                 return color;
             });
 
-        let curr_pag = 71;
+        let curr_pag = 66;
 
         // Marker
         self.marker = self.g_nav.append('rect')
