@@ -7,19 +7,39 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+
         body {
             font-family: Georgia, 'Times New Roman', Times, serif;
         }
+        #root {
+            background-color: #eee;
+            position: relative;
+            width: 1000px;
+            height: 500px;
+            margin: 0 auto;
+        }
+        #box {
+            position: absolute;
+        }
 
-        .container {
-            text-align: center;
+        #box .item {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.75rem;
+            box-sizing: border-box;
+            position: absolute;
+            background-color: #ddd;
+            padding: 0.5rem;
+            width: 240px;
+            min-height: 50px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div id="root"></div>
+        <div id="root">
+        </div>
     </div>
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
