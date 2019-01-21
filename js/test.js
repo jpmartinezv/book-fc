@@ -6,15 +6,20 @@ const BFC = (parameters) => {
     }
 
     self.parent_select = '#' + self.parent_id;
-    self.lines_n = 25;
-    self.lines_height = 9;
-    self.lines_padd = 6;
+    // Page
+    self.page_height = 400;
     self.page_width = 300;
     self.page_padd = 10;
     self.page_x = (self.width - self.page_width) / 2;
     self.page_y = 35;
-    self.page_height = self.lines_height * self.lines_n + self.lines_padd * (self.lines_n - 1) + 2 * self.page_padd;
-    self.num_pages = 150;
+    // Line
+    self.lines_n = 33;
+    self.lines_padd = 3;
+    self.lines_height = (self.page_height - 2 * self.page_padd) / (self.lines_n) - self.lines_padd;
+    // 
+    self.num_pages = 176;
+
+    self.data = {};
 
     self.init = () => {
         d3.select(self.parent_select).append('div')
@@ -44,9 +49,12 @@ const BFC = (parameters) => {
             .attr('orient', 'auto')
             .append('path')
             .attr("d", 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0');
+
     }
 
-    self.render = (data, book) => {
+    self.render = (data, book, normativa) => {
+        self.book = self.prepareBook(book);
+        self.addData(normativa);
         /* Page Title */
         self.page_title = self.g_page.append('text')
             .attr('x', self.page_width / 2)
@@ -62,37 +70,12 @@ const BFC = (parameters) => {
             .attr('height', self.page_height)
             .attr('fill', '#fff');
 
-        const lines = self.g_page.append('g');
-
-        // Page lines
-        lines.selectAll('.line')
-            .data(Array(self.lines_n))
-            .enter()
-            .append('rect')
-            .attr('x', (d, i) => {
-                const x = i % 10 == 0 ? 20 : 0;
-                return x + self.page_padd;
-            })
-            .attr('y', (d, i) => {
-                const page_offset = self.page_y + self.page_padd;
-                const bar_height = self.lines_height + self.lines_padd;
-                return page_offset + i * (bar_height);
-            })
-            .attr('width', (d, i) => {
-                const x = i % 10 == 0 ? 20 : 0;
-                return self.page_width - 2 * self.page_padd - x;
-            })
-            .attr('height', self.lines_height)
-            .style('fill', '#eee');
+        self.lines = self.g_page.append('g').attr('class', 'lines');
+        self.hl = self.g_page.append('g').attr('class', 'hl');
 
         // Navigation bar
         self.renderNavbar(data);
-        self.renderBook(book);
     }
-
-    self.renderBook = (book) => {
-        console.log(book);
-    };
 
     self.renderNavbar = (data) => {
         const pages = {};
@@ -159,7 +142,7 @@ const BFC = (parameters) => {
                 return color;
             });
 
-        let curr_pag = 66;
+        let curr_pag = 86;
 
         // Marker
         self.marker = self.g_nav.append('rect')
@@ -204,7 +187,134 @@ const BFC = (parameters) => {
         self.updatePage(curr_pag, pages[curr_pag]);
     }
 
+    self.addData = function (data) {
+        data.forEach(d => {
+            const p = d['Página'];
+            if (self.data[p] == undefined) {
+                self.data[p] = {
+                    'normativa': []
+                };
+            }
+            self.data[p]['normativa'].push(d);
+        });
+
+        console.log(self.data);
+    }
+
+    self.prepareBook = (book) => {
+        const book_map = {};
+
+        book.forEach(d => {
+            book_map[d['Página']] = {
+                'page': d['Página'],
+                'contenido': parseInt(d['Contenido']),
+                'pie': parseInt(d['Pie']),
+                'tipo': d['Tipo'],
+            };
+        });
+        return book_map;
+    };
+
+    self.renderPage = (p) => {
+        const page = self.book[p];
+
+        var pie_offset = 0;
+
+        // Page lines
+        self.lines.selectAll('.line').remove();
+        const content = self.lines.selectAll('.line')
+            .data(Array(page.contenido))
+            .enter()
+            .append('rect')
+            .attr('class', (d, i) => 'line line-' + i)
+            .attr('x', (d, i) => {
+                const x = i % 10 == 0 ? 20 : 0;
+                return x + self.page_padd;
+            })
+            .attr('y', (d, i) => {
+                const page_offset = self.page_y + self.page_padd;
+                const bar_height = self.lines_height + self.lines_padd;
+
+                pie_offset = page_offset + i * (bar_height) + self.lines_height;
+
+                return page_offset + i * (bar_height);
+            })
+            .attr('width', (d, i) => {
+                const x = i % 10 == 0 ? 20 : 0;
+                return self.page_width - 2 * self.page_padd - x;
+            })
+            .attr('height', self.lines_height)
+            .style('fill', '#eee');
+
+        pie_offset = self.page_height - self.page_padd - page.pie * (self.lines_height - 2 + self.lines_padd);
+
+        // Pie lines
+        self.lines.selectAll('.pie').remove();
+        const pie = self.lines.selectAll('.pie')
+            .data(Array(page.pie))
+            .enter()
+            .append('rect')
+            .attr('class', (d, i) => 'pie pie-' + i)
+            .attr('x', self.page_padd + 15)
+            .attr('y', (d, i) => {
+                const bar_height = (self.lines_height - 2) + self.lines_padd;
+                return self.page_y + pie_offset + i * (bar_height);
+            })
+            .attr('width', self.page_width - 2 * self.page_padd - 15)
+            .attr('height', self.lines_height - 2)
+            .style('fill', '#e42ee');
+
+        self.paint(p);
+    };
+
+    self.paint = (p) => {
+        var page = self.data[p];
+        if (!page) return;
+        console.log(page);
+
+        self.hl.selectAll('*').remove();
+
+        self.hl
+            .selectAll('.normativa')
+            .data(page.normativa)
+            .enter()
+            .append('rect')
+            .attr('class', 'normativa')
+            .attr('x', d => {
+                let padd_x = 0;
+                const f = (self.page_width - 2 * self.page_padd) / 4;
+                switch (d['Bloque']) {
+                    case 'a':
+                        padd_x = 0;
+                        break;
+                    case 'b':
+                        padd_x = f;
+                        break;
+                    case 'c':
+                        padd_x = 2 * f;
+                        break;
+                    case 'd':
+                        padd_x = 3 * f;
+                        break;
+                }
+                return self.page_padd + padd_x;
+            })
+            .attr('y', d => {
+                var line = parseInt(d['Línea'].replace('(pie)'));
+                const page_offset = self.page_y + self.page_padd;
+                const bar_height = self.lines_height + self.lines_padd;
+                return page_offset + line * (bar_height);
+            })
+            .attr('width', '40')
+            .attr('height', self.lines_height)
+            .style('fill', 'red');
+
+    };
+
     self.updatePage = (p, data) => {
+        self.renderPage(p);
+        return;
+
         const box = d3.select('#box');
 
         self.page_title
@@ -261,8 +371,6 @@ const BFC = (parameters) => {
                 ];
             }
         });
-
-        console.log(data);
 
         // Highlight lines
         self.g_page.selectAll('.hl')
@@ -331,6 +439,7 @@ const BFC = (parameters) => {
     });
 
     const data = await d3.csv("data.csv");
+    const normativa = await d3.csv("normativa.csv");
     const book = await d3.csv("libro.csv");
-    bfc.render(data, book);
+    bfc.render(data, book, normativa);
 })();
