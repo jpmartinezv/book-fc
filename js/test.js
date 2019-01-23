@@ -191,34 +191,38 @@ const BFC = (parameters) => {
     self.addTablas = function (data) {
         data.forEach(d => {
             const p = d['Página'];
-            p.split('-').forEach(pi => {
-                if (self.data[p] == undefined) {
-                    self.data[p] = {
+            var s = parseInt(p.split('-')[0]);
+            var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+            for (var j = s; j <= e; j++) {
+                if (self.data[j] == undefined) {
+                    self.data[j] = {
                         'citas': [],
                         'normativa': [],
                         'tablas': [],
                         'graficos': []
                     };
+                    self.data[j]['tablas'].push(d);
                 }
-                self.data[p]['tablas'].push(d);
-            });
+            };
         });
     };
 
     self.addGraficos = function (data) {
         data.forEach(d => {
             const p = d['Página'];
-            p.split('-').forEach(pi => {
-                if (self.data[p] == undefined) {
-                    self.data[p] = {
+            var s = parseInt(p.split('-')[0]);
+            var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+            for (var j = s; j <= e; j++) {
+                if (self.data[j] == undefined) {
+                    self.data[j] = {
                         'citas': [],
                         'normativa': [],
                         'tablas': [],
                         'graficos': []
                     };
+                    self.data[j]['graficos'].push(d);
                 }
-                self.data[p]['graficos'].push(d);
-            });
+            };
         });
     };
 
@@ -412,7 +416,6 @@ const BFC = (parameters) => {
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Bloque'].split('0')[0]) - 1;
-                console.log(line);
                 const page_offset = self.page_y + self.page_padd;
                 return page_offset + line * (bar_height + padd);
             })
