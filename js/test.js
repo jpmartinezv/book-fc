@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 86;
+    let curr_pag = 160;
     // Page
     self.page_height = 400;
     self.page_width = 300;
@@ -190,40 +190,45 @@ const BFC = (parameters) => {
 
     self.addTablas = function (data) {
         data.forEach(d => {
-            const p = d['Página'];
-            var s = parseInt(p.split('-')[0]);
-            var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
-            for (var j = s; j <= e; j++) {
-                if (self.data[j] == undefined) {
-                    self.data[j] = {
-                        'citas': [],
-                        'normativa': [],
-                        'tablas': [],
-                        'graficos': []
-                    };
+            if (d['Problema']) {
+                const p = d['Página'];
+                var s = parseInt(p.split('-')[0]);
+                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (var j = s; j <= e; j++) {
+                    if (self.data[j] == undefined) {
+                        self.data[j] = {
+                            'citas': [],
+                            'normativa': [],
+                            'tablas': [],
+                            'graficos': []
+                        };
+                    }
                     self.data[j]['tablas'].push(d);
-                }
-            };
+                };
+            }
         });
     };
 
     self.addGraficos = function (data) {
         data.forEach(d => {
-            const p = d['Página'];
-            var s = parseInt(p.split('-')[0]);
-            var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
-            for (var j = s; j <= e; j++) {
-                if (self.data[j] == undefined) {
-                    self.data[j] = {
-                        'citas': [],
-                        'normativa': [],
-                        'tablas': [],
-                        'graficos': []
-                    };
+            if (d['Problema']) {
+                const p = d['Página'];
+                var s = parseInt(p.split('-')[0]);
+                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (var j = s; j <= e; j++) {
+                    if (self.data[j] == undefined) {
+                        self.data[j] = {
+                            'citas': [],
+                            'normativa': [],
+                            'tablas': [],
+                            'graficos': []
+                        };
+                    }
                     self.data[j]['graficos'].push(d);
-                }
-            };
+                };
+            }
         });
+        console.log(self.data)
     };
 
     // END DATA
@@ -422,10 +427,16 @@ const BFC = (parameters) => {
             .attr('width', (d, i) => {
                 return self.page_width - 2 * self.page_padd;
             })
-            .attr('height', bar_height)
+            .attr('height', d => {
+                var s = parseInt(d['Bloque'].split('-')[0]);
+                var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
+                console.log(s, e)
+                return s - e == 0 ? bar_height : (2 * bar_height + padd);
+            })
             .style('fill', 'yellow');
 
         // Graficos
+        console.log(page.graficos)
         self.hl
             .selectAll('.grafico')
             .data(page.graficos)
@@ -441,7 +452,12 @@ const BFC = (parameters) => {
             .attr('width', (d, i) => {
                 return self.page_width - 2 * self.page_padd;
             })
-            .attr('height', bar_height)
+            .attr('height', d => {
+                var s = parseInt(d['Bloque'].split('-')[0]);
+                var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
+                console.log(s, e)
+                return s - e == 0 ? bar_height : (2 * bar_height + padd);
+            })
             .style('fill', 'orange');
     };
 
