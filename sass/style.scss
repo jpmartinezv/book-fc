@@ -1,7 +1,10 @@
-@import url('https://fonts.googleapis.com/css?family=Markazi+Text:400,500,600,700');
+@import url("https://fonts.googleapis.com/css?family=Markazi+Text:400,500,600,700");
+
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 
 html {
     font-family: 'Markazi Text', serif;
+    font-size: 14px;
 }
 
 body {
@@ -29,6 +32,7 @@ body {
 
 .section {
     position: relative;
+
     // background-color: #000;
 
     .content {
@@ -36,9 +40,30 @@ body {
         left: 50%;
         position: absolute;
         transform: translate(-50%, -50%);
-
         color: #fff;
         font-size: 40px;
         text-align: center;
     }
+}
+
+#root {
+    background-color: #eee;
+    position: relative;
+    width: 1000px;
+    height: 500px;
+    margin: 0 auto;
+}
+
+#box {
+    position: absolute;
+}
+
+#box .item {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.75rem;
+    box-sizing: border-box;
+    position: absolute;
+    background-color: #ddd;
+    padding: 0.5rem;
+    width: 240px;
 }
