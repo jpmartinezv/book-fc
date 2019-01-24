@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 160;
+    let curr_pag = 166;
     // Page
     self.page_height = 400;
     self.page_width = 300;
@@ -166,7 +166,8 @@ const BFC = (parameters) => {
                     'citas': [],
                     'normativa': [],
                     'tablas': [],
-                    'graficos': []
+                    'graficos': [],
+                    'bibliografia': [],
                 };
             }
             self.data[p]['normativa'].push(d);
@@ -181,7 +182,8 @@ const BFC = (parameters) => {
                     'citas': [],
                     'normativa': [],
                     'tablas': [],
-                    'graficos': []
+                    'graficos': [],
+                    'bibliografia': [],
                 };
             }
             self.data[p]['citas'].push(d);
@@ -200,7 +202,8 @@ const BFC = (parameters) => {
                             'citas': [],
                             'normativa': [],
                             'tablas': [],
-                            'graficos': []
+                            'graficos': [],
+                            'bibliografia': [],
                         };
                     }
                     self.data[j]['tablas'].push(d);
@@ -221,14 +224,35 @@ const BFC = (parameters) => {
                             'citas': [],
                             'normativa': [],
                             'tablas': [],
-                            'graficos': []
+                            'graficos': [],
+                            'bibliografia': [],
                         };
                     }
                     self.data[j]['graficos'].push(d);
                 };
             }
         });
-        console.log(self.data)
+    };
+
+    self.addBibliografia = function (data) {
+        var nn = 0;
+        data.forEach(d => {
+            if (d['Problema']) {
+                const p = d['Página'];
+                if (self.data[p] == undefined) {
+                    self.data[p] = {
+                        'citas': [],
+                        'normativa': [],
+                        'tablas': [],
+                        'graficos': [],
+                        'bibliografia': [],
+                    };
+                    nn = d['Número'];
+                }
+                d['Línea'] = d['Número'] - nn + 1;
+                self.data[p]['bibliografia'].push(d);
+            }
+        });
     };
 
     // END DATA
@@ -284,7 +308,8 @@ const BFC = (parameters) => {
 
         if (page.tipo == 'Referencia') {
             const padd = self.lines_padd * 2;
-            const bar_height = (self.page_height - 2 * self.page_padd + padd) / (page.contenido) - padd;
+            let bar_height = (self.page_height - 2 * self.page_padd + padd) / (page.contenido) - padd;
+            bar_height = Math.min(bar_height, 35);
 
             const content = self.lines.selectAll('.line')
                 .data(Array(page.contenido))
@@ -333,6 +358,7 @@ const BFC = (parameters) => {
     };
 
     self.paint = (p) => {
+        var page__book = self.book[p];
         var page = self.data[p];
         self.hl.selectAll('*').remove();
         if (!page) return;
@@ -410,8 +436,8 @@ const BFC = (parameters) => {
             .style('fill', 'green');
 
         // Tablas
-        const padd = self.lines_padd * 4;
-        const bar_height = (self.page_height - 2 * self.page_padd - padd) / 2;
+        let padd = self.lines_padd * 4;
+        let bar_height = (self.page_height - 2 * self.page_padd - padd) / 2;
         self.hl
             .selectAll('.tabla')
             .data(page.tablas)
@@ -430,13 +456,11 @@ const BFC = (parameters) => {
             .attr('height', d => {
                 var s = parseInt(d['Bloque'].split('-')[0]);
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
-                console.log(s, e)
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
             .style('fill', 'yellow');
 
         // Graficos
-        console.log(page.graficos)
         self.hl
             .selectAll('.grafico')
             .data(page.graficos)
@@ -455,10 +479,32 @@ const BFC = (parameters) => {
             .attr('height', d => {
                 var s = parseInt(d['Bloque'].split('-')[0]);
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
-                console.log(s, e)
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
             .style('fill', 'orange');
+
+        // Bibliografía
+        padd = self.lines_padd * 2;
+        bar_height = (self.page_height - 2 * self.page_padd + padd) / (page__book.contenido) - padd;
+        bar_height = Math.min(bar_height, 35);
+
+        self.hl
+            .selectAll('.bibliografia')
+            .data(page.bibliografia)
+            .enter()
+            .append('rect')
+            .attr('class', 'bibliografia')
+            .attr('x', self.page_padd)
+            .attr('y', d => {
+                var line = parseInt(d['Línea']) - 1;
+                const page_offset = self.page_y + self.page_padd;
+                return page_offset + line * (bar_height + padd);
+            })
+            .attr('width', (d, i) => {
+                return self.page_width - 2 * self.page_padd;
+            })
+            .attr('height', bar_height)
+            .style('fill', 'aquamarine');
     };
 
     self.updatePage = (p) => {
@@ -482,10 +528,12 @@ const BFC = (parameters) => {
     const book = await d3.csv("libro.csv");
     const tablas = await d3.csv("tablas.csv");
     const graficos = await d3.csv("graficos.csv");
+    const bibliografia = await d3.csv("bibliografia.csv");
     bfc.prepareBook(book);
     bfc.addNormativa(normativa);
     bfc.addCitas(citas);
     bfc.addTablas(tablas);
     bfc.addGraficos(graficos);
+    bfc.addBibliografia(bibliografia);
     bfc.render();
 })();
