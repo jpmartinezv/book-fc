@@ -71,7 +71,7 @@ const BFC = (parameters) => {
             .attr('fill', '#fff');
 
         self.lines = self.g_page.append('g').attr('class', 'lines');
-        self.hl = self.g_page.append('g').attr('class', 'hl');
+        self.hl = self.g_page.append('g').attr('class', 'g_hl');
 
         // Navigation bar
         self.renderNavbar();
@@ -165,12 +165,30 @@ const BFC = (parameters) => {
                 self.data[p] = {
                     'citas': [],
                     'normativa': [],
+                    'pie': [],
                     'tablas': [],
                     'graficos': [],
                     'bibliografia': [],
                 };
             }
             self.data[p]['normativa'].push(d);
+        });
+    };
+
+    self.addPie = function (data) {
+        data.forEach(d => {
+            const p = d['Página'];
+            if (self.data[p] == undefined) {
+                self.data[p] = {
+                    'citas': [],
+                    'normativa': [],
+                    'pie': [],
+                    'tablas': [],
+                    'graficos': [],
+                    'bibliografia': [],
+                };
+            }
+            self.data[p]['pie'].push(d);
         });
     };
 
@@ -181,6 +199,7 @@ const BFC = (parameters) => {
                 self.data[p] = {
                     'citas': [],
                     'normativa': [],
+                    'pie': [],
                     'tablas': [],
                     'graficos': [],
                     'bibliografia': [],
@@ -201,6 +220,7 @@ const BFC = (parameters) => {
                         self.data[j] = {
                             'citas': [],
                             'normativa': [],
+                            'pie': [],
                             'tablas': [],
                             'graficos': [],
                             'bibliografia': [],
@@ -223,6 +243,7 @@ const BFC = (parameters) => {
                         self.data[j] = {
                             'citas': [],
                             'normativa': [],
+                            'pie': [],
                             'tablas': [],
                             'graficos': [],
                             'bibliografia': [],
@@ -243,6 +264,7 @@ const BFC = (parameters) => {
                     self.data[p] = {
                         'citas': [],
                         'normativa': [],
+                        'pie': [],
                         'tablas': [],
                         'graficos': [],
                         'bibliografia': [],
@@ -369,7 +391,7 @@ const BFC = (parameters) => {
             .data(page.normativa)
             .enter()
             .append('rect')
-            .attr('class', 'normativa')
+            .attr('class', 'hl normativa')
             .attr('x', d => {
                 let padd_x = 0;
                 const f = (self.page_width - 2 * self.page_padd) / 4;
@@ -397,7 +419,9 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', 'red');
+            .style('fill', 'red')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip());
 
         // Citas
         self.hl
@@ -405,7 +429,7 @@ const BFC = (parameters) => {
             .data(page.citas)
             .enter()
             .append('rect')
-            .attr('class', 'cita')
+            .attr('class', 'hl cita')
             .attr('x', d => {
                 let padd_x = 0;
                 const f = (self.page_width - 2 * self.page_padd) / 4;
@@ -433,7 +457,9 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', 'green');
+            .style('fill', 'green')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip());
 
         // Tablas
         let padd = self.lines_padd * 4;
@@ -443,7 +469,7 @@ const BFC = (parameters) => {
             .data(page.tablas)
             .enter()
             .append('rect')
-            .attr('class', 'tabla')
+            .attr('class', 'hl tabla')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Bloque'].split('0')[0]) - 1;
@@ -458,7 +484,9 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', 'yellow');
+            .style('fill', 'yellow')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip());
 
         // Graficos
         self.hl
@@ -466,7 +494,7 @@ const BFC = (parameters) => {
             .data(page.graficos)
             .enter()
             .append('rect')
-            .attr('class', 'grafico')
+            .attr('class', 'hl grafico')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Bloque'].split('0')[0]) - 1;
@@ -481,7 +509,9 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', 'orange');
+            .style('fill', 'orange')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip());
 
         // Bibliografía
         padd = self.lines_padd * 2;
@@ -493,7 +523,7 @@ const BFC = (parameters) => {
             .data(page.bibliografia)
             .enter()
             .append('rect')
-            .attr('class', 'bibliografia')
+            .attr('class', 'hl bibliografia')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Línea']) - 1;
@@ -504,7 +534,32 @@ const BFC = (parameters) => {
                 return self.page_width - 2 * self.page_padd;
             })
             .attr('height', bar_height)
-            .style('fill', 'aquamarine');
+            .style('fill', 'aquamarine')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip());
+
+        function showTooltip(d) {
+            console.log(d);
+            const coordinates = d3.mouse(d3.select('#root').node());
+            const x = coordinates[0],
+                y = coordinates[1];
+
+            const tooltip = d3.select("#tooltip");
+
+            tooltip
+                .style('left', x + 'px')
+                .style('top', y + 'px')
+                .style('display', 'block')
+                .html(
+                    '<b>Fragmento</b>:<br> ' + d['Fragmento'] + '<br><br>' +
+                    '<b>Problema</b>:<br> ' + d['Problema']
+                );
+        }
+
+        function hideTooltip() {
+            d3.select("#tooltip")
+                .style('display', 'none')
+        }
     };
 
     self.updatePage = (p) => {
@@ -529,11 +584,13 @@ const BFC = (parameters) => {
     const tablas = await d3.csv("tablas.csv");
     const graficos = await d3.csv("graficos.csv");
     const bibliografia = await d3.csv("bibliografia.csv");
+    const pie = await d3.csv("pie.csv");
     bfc.prepareBook(book);
     bfc.addNormativa(normativa);
     bfc.addCitas(citas);
     bfc.addTablas(tablas);
     bfc.addGraficos(graficos);
     bfc.addBibliografia(bibliografia);
+    bfc.addPie(pie);
     bfc.render();
 })();
