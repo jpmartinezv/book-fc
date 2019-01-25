@@ -11,47 +11,20 @@ body {
     margin: 0;
 }
 
-.bg {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: #000;
-
-    img {
-        display: none;
-        top: 50%;
-        left: 50%;
-        position: absolute;
-        width: auto;
-        height: 100%;
-        transform: translate(-50%, -50%);
-    }
-}
-
-.section {
-    position: relative;
-
-    // background-color: #000;
-
-    .content {
-        top: 50%;
-        left: 50%;
-        position: absolute;
-        transform: translate(-50%, -50%);
-        color: #fff;
-        font-size: 40px;
-        text-align: center;
-    }
-}
-
 #root {
     background-color: #eee;
     position: relative;
     width: 1000px;
     height: 500px;
     margin: 0 auto;
+    padding-top: 30px;
+}
+
+@media only screen and (max-width: 500px) {
+    #root {
+        width: 100%;
+        max-width: 1000px;
+    }
 }
 
 #box {
@@ -59,13 +32,14 @@ body {
 }
 
 #box .item {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.75rem;
+    font-size: 15px;
+    line-height: 1.05;
     box-sizing: border-box;
     position: absolute;
     background-color: #ddd;
     padding: 0.5rem;
-    width: 240px;
+    width: 330px;
+    box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.16);
 }
 
 .hl {
@@ -74,32 +48,30 @@ body {
 
 /* Tooltip */
 .tooltip {
-    font-family: 'Roboto', sans-serif;
     position: absolute;
     padding: 7px;
     border-radius: 3px;
     background-color: #000;
     background-color: hsla(0, 0%, 12%, 0.9);
     color: #fff;
+    font-size: 16px;
     font-weight: 300;
-    font-size: 13px;
-    font-weight: 300;
-    line-height: 1.35;
-    transform: translate(-50%, calc(-100% - 5px));
+    line-height: 1.1;
+    transform: translate(-50%, 10px);
     z-index: 1000;
     pointer-events: none;
     display: none;
-    max-width: 300px;
+    width: 90%;
 }
 
-.tooltip:after {
+.tooltip .triangle {
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 50%;
     margin-left: -5px;
     width: 0;
-    border-top: 5px solid #000;
-    border-top: 5px solid hsla(0, 0%, 12%, 0.9);
+    border-bottom: 5px solid #000;
+    border-bottom: 5px solid hsla(0, 0%, 12%, 0.9);
     border-right: 5px solid transparent;
     border-left: 5px solid transparent;
     content: " ";

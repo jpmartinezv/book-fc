@@ -1,4 +1,4 @@
-id,Problema,Página,Bloque
+Fragmento,Problema,Página,Bloque
 Tabla 1,"Esta tabla viene numerada de dos maneras, como ""Tabla Nº 1"" y como ""Cuadro Nº 1"". El pixelado sugiere que es una imagen copiada y pegada de otra fuente. El diseño es idéntido al habitualmente utilizado por el INEI, a quien se cita como fuente pero no se atribuye la elaboración. Finalmente no se detalla la unidad empleada.",143,2
 Tabla 2,"No indica el periodo temporal al que se refieren los datos incluidos en la tabla, ni tampoco señala título ni el año de publicación de la información. Hay una errata en una de las columnas, en donde escribe ""Urban"" en lugar de ""Urbano"" o ""Urbana"". Los datos de columna ""Total - % Madres"" carecen de unidad. ",144,1-2
 Tabla 3,Esta tabla no tiene título y los datos carecen de una unidad. ,145,1-2

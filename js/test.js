@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 166;
+    let curr_pag = 129;
     // Page
     self.page_height = 400;
     self.page_width = 300;
@@ -22,6 +22,14 @@ const BFC = (parameters) => {
     self.num_pages = 176;
 
     self.data = {};
+
+    self.flag = self.width < 500;
+
+    self.box = d3.select('#box');
+
+    self.line = d3.line()
+        .x((d) => d.x)
+        .y((d) => d.y);
 
     self.init = () => {
         d3.select(self.parent_select).append('div')
@@ -39,6 +47,8 @@ const BFC = (parameters) => {
 
         self.g_page = self.svg.append('g')
             .attr("transform", "translate(" + (self.width / 2 - self.page_width / 2) + ", " + 0 + ")");
+
+        self.g_lines = self.svg.append('g');
 
         self.svg.append('defs')
             .append('marker').attr('id', 'arrow')
@@ -160,18 +170,20 @@ const BFC = (parameters) => {
 
     self.addNormativa = function (data) {
         data.forEach(d => {
-            const p = d['Página'];
-            if (self.data[p] == undefined) {
-                self.data[p] = {
-                    'citas': [],
-                    'normativa': [],
-                    'pie': [],
-                    'tablas': [],
-                    'graficos': [],
-                    'bibliografia': [],
-                };
+            if (d['Problema']) {
+                const p = d['Página'];
+                if (self.data[p] == undefined) {
+                    self.data[p] = {
+                        'citas': [],
+                        'normativa': [],
+                        'pie': [],
+                        'tablas': [],
+                        'graficos': [],
+                        'bibliografia': [],
+                    };
+                }
+                self.data[p]['normativa'].push(d);
             }
-            self.data[p]['normativa'].push(d);
         });
     };
 
@@ -194,18 +206,20 @@ const BFC = (parameters) => {
 
     self.addCitas = function (data) {
         data.forEach(d => {
-            const p = d['Página'];
-            if (self.data[p] == undefined) {
-                self.data[p] = {
-                    'citas': [],
-                    'normativa': [],
-                    'pie': [],
-                    'tablas': [],
-                    'graficos': [],
-                    'bibliografia': [],
-                };
+            if (d['Problema']) {
+                const p = d['Página'];
+                if (self.data[p] == undefined) {
+                    self.data[p] = {
+                        'citas': [],
+                        'normativa': [],
+                        'pie': [],
+                        'tablas': [],
+                        'graficos': [],
+                        'bibliografia': [],
+                    };
+                }
+                self.data[p]['citas'].push(d);
             }
-            self.data[p]['citas'].push(d);
         });
     };
 
@@ -383,6 +397,13 @@ const BFC = (parameters) => {
         var page__book = self.book[p];
         var page = self.data[p];
         self.hl.selectAll('*').remove();
+
+        d3.select('#box').selectAll('.item').remove();
+        d3.selectAll('.hl_text').remove();
+        self.k = 0;
+        self.y1 = 10;
+        self.y2 = 10;
+
         if (!page) return;
 
         // Normativa
@@ -421,7 +442,8 @@ const BFC = (parameters) => {
             .attr('height', self.lines_height)
             .style('fill', 'red')
             .on('mousemove', d => showTooltip(d))
-            .on('mouseout', d => hideTooltip());
+            .on('mouseout', d => hideTooltip())
+            .each(function (d) { renderInfo(this, d); });
 
         // Citas
         self.hl
@@ -459,7 +481,8 @@ const BFC = (parameters) => {
             .attr('height', self.lines_height)
             .style('fill', 'green')
             .on('mousemove', d => showTooltip(d))
-            .on('mouseout', d => hideTooltip());
+            .on('mouseout', d => hideTooltip())
+            .each(function (d) { renderInfo(this, d); });
 
         // Tablas
         let padd = self.lines_padd * 4;
@@ -486,7 +509,8 @@ const BFC = (parameters) => {
             })
             .style('fill', 'yellow')
             .on('mousemove', d => showTooltip(d))
-            .on('mouseout', d => hideTooltip());
+            .on('mouseout', d => hideTooltip())
+            .each(function (d) { renderInfo(this, d); });
 
         // Graficos
         self.hl
@@ -511,7 +535,8 @@ const BFC = (parameters) => {
             })
             .style('fill', 'orange')
             .on('mousemove', d => showTooltip(d))
-            .on('mouseout', d => hideTooltip());
+            .on('mouseout', d => hideTooltip())
+            .each(function (d) { renderInfo(this, d); });
 
         // Bibliografía
         padd = self.lines_padd * 2;
@@ -536,29 +561,100 @@ const BFC = (parameters) => {
             .attr('height', bar_height)
             .style('fill', 'aquamarine')
             .on('mousemove', d => showTooltip(d))
-            .on('mouseout', d => hideTooltip());
+            .on('mouseout', d => hideTooltip())
+            .each(function (d) { renderInfo(this, d); });
 
         function showTooltip(d) {
-            console.log(d);
-            const coordinates = d3.mouse(d3.select('#root').node());
-            const x = coordinates[0],
-                y = coordinates[1];
-
+            if (!self.flag) return;
             const tooltip = d3.select("#tooltip");
+            const coordinates = d3.mouse(d3.select('#root').node());
+            const x = self.width / 2;
+            const y = coordinates[1];
 
             tooltip
                 .style('left', x + 'px')
                 .style('top', y + 'px')
                 .style('display', 'block')
+                .select('.content')
                 .html(
                     '<b>Fragmento</b>:<br> ' + d['Fragmento'] + '<br><br>' +
                     '<b>Problema</b>:<br> ' + d['Problema']
                 );
+
+            tooltip
+                .select('.triangle')
+                .style('left', coordinates[0] + 'px');
         }
 
         function hideTooltip() {
             d3.select("#tooltip")
                 .style('display', 'none')
+        }
+
+        function renderInfo(that, d) {
+            if (self.flag) return;
+            const el = d3.select(that).node().getBBox();
+            const px = self.k % 2 == 0 ? 10 : self.width - 340;
+            const py = self.k % 2 == 0 ? self.y1 : self.y2;
+
+            var item = d3.select('#box')
+                .append('div')
+                .attr('class', 'item')
+                .style('left', px + 'px')
+                .style('top', py + 'px')
+                .html(
+                    '<b>Fragmento:</b><br>' + d.Fragmento + '<br><br>' +
+                    '<b>Problema:</b><br>' + d.Problema + '<br>'
+                );
+
+            if (self.k % 2 == 0) {
+                var points = [{
+                    x: px + 330,
+                    y: py
+                },
+                {
+                    x: px + 340,
+                    y: py
+                },
+                {
+                    x: self.width / 2 - self.page_width / 2 + el.x,
+                    y: el.y
+                }
+                ];
+            } else {
+                var points = [{
+                    x: px,
+                    y: py
+                },
+                {
+                    x: px - 10,
+                    y: py
+                },
+                {
+                    x: self.width / 2 - self.page_width / 2 + el.x + el.width,
+                    y: el.y
+                }
+                ];
+            }
+
+            self.g_lines
+                .append('path')
+                .attr('class', 'hl_text')
+                .attr('d', (d) => self.line(points))
+                .attr('fill', 'transparent')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1.5)
+                .attr('marker-end', 'url(#arrow)');
+
+            var h = item.node().getBoundingClientRect().height;
+
+            if (self.k % 2 == 0) {
+                self.y1 += (h + 10);
+            } else {
+                self.y2 += (h + 10);
+            }
+
+            self.k += 1;
         }
     };
 
@@ -574,7 +670,7 @@ const BFC = (parameters) => {
 (async () => {
     const bfc = BFC({
         parent_id: 'root',
-        width: 1000,
+        width: d3.select('#root').node().getBoundingClientRect().width,
         height: 500,
     });
 
