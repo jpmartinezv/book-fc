@@ -51,7 +51,7 @@ const BFC = (parameters) => {
         self.g_lines = self.svg.append('g');
 
         self.g_nav = self.svg.append('g')
-            .attr("transform", "translate(" + 10 + ", " + (self.height - 50) + ")")
+            .attr("transform", "translate(" + 10 + ", " + (self.height - 45) + ")")
             .attr('width', self.width - 20)
             .attr('height', 30);
 
@@ -96,6 +96,14 @@ const BFC = (parameters) => {
         const nav_width = self.width - 20;
         const nav_height = 32;
         const item_width = nav_width / self.num_pages;
+
+        // BG
+        self.g_nav.append('rect')
+            .attr('x', 0)
+            .attr('y', -5)
+            .attr('width', nav_width)
+            .attr('height', nav_height + 13)
+            .attr('fill', '#ddd');
 
         // Bar
         self.g_nav.append('rect')
@@ -324,6 +332,9 @@ const BFC = (parameters) => {
 
     self.renderPage = (p) => {
         self.lines.selectAll('*').remove();
+        self.hl.selectAll('*').remove();
+        d3.select('#box').selectAll('.item').remove();
+        d3.selectAll('.hl_text').remove();
 
         const page = self.book[p];
 
@@ -470,7 +481,7 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', 'red')
+            .style('fill', '#80172d')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -509,7 +520,7 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', 'green')
+            .style('fill', '#00b394')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -537,7 +548,7 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', 'yellow')
+            .style('fill', '#00b394')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -563,7 +574,7 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', 'orange')
+            .style('fill', '#80172d')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -623,7 +634,7 @@ const BFC = (parameters) => {
                 return width_x;
             })
             .attr('height', self.lines_height - 2)
-            .style('fill', 'blue')
+            .style('fill', '#81b1e2')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .filter(d => d.info)
@@ -650,7 +661,7 @@ const BFC = (parameters) => {
                 return self.page_width - 2 * self.page_padd;
             })
             .attr('height', bar_height)
-            .style('fill', 'aquamarine')
+            .style('fill', '#81b1e2')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
