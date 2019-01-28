@@ -17,18 +17,18 @@ body {
     width: 1000px;
     height: 500px;
     margin: 0 auto;
-    padding-top: 30px;
 }
 
-@media only screen and (max-width: 500px) {
-    #root {
-        width: 100%;
-        max-width: 1000px;
-    }
+#wrapper {
+    position: absolute;
+    height: calc(100% - 50px);
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #box {
-    position: absolute;
+    position: relative;
 }
 
 #box .item {
@@ -79,4 +79,15 @@ body {
     font-size: 0;
     line-height: 0;
     z-index: 1000;
+}
+
+@media only screen and (max-width: 500px) {
+    #root {
+        width: 100%;
+        max-width: 1000px;
+    }
+
+    #wrapper {
+        display: none;
+    }
 }

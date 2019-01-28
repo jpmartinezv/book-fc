@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 94;
+    let curr_pag = 169;
     // Page
     self.page_height = 400;
     self.page_width = 300;
@@ -27,12 +27,17 @@ const BFC = (parameters) => {
 
     self.box = d3.select('#box');
 
+    self.data_lines = [];
+
     self.line = d3.line()
         .x((d) => d.x)
         .y((d) => d.y);
 
     self.init = () => {
-        d3.select(self.parent_select).append('div')
+        d3.select(self.parent_select)
+            .append('div')
+            .attr('id', 'wrapper')
+            .append('div')
             .attr('id', 'box');
 
         self.svg = d3.select(self.parent_select)
@@ -40,15 +45,15 @@ const BFC = (parameters) => {
             .attr('width', self.width)
             .attr('height', self.height)
 
-        self.g_nav = self.svg.append('g')
-            .attr("transform", "translate(" + 10 + ", " + (self.height - 50) + ")")
-            .attr('width', self.width - 20)
-            .attr('height', 30);
-
         self.g_page = self.svg.append('g')
             .attr("transform", "translate(" + (self.width / 2 - self.page_width / 2) + ", " + 0 + ")");
 
         self.g_lines = self.svg.append('g');
+
+        self.g_nav = self.svg.append('g')
+            .attr("transform", "translate(" + 10 + ", " + (self.height - 50) + ")")
+            .attr('width', self.width - 20)
+            .attr('height', 30);
 
         self.svg.append('defs')
             .append('marker').attr('id', 'arrow')
@@ -229,7 +234,7 @@ const BFC = (parameters) => {
                     var ls = parseInt(lines.split('-')[0]);
                     var le = lines.split('-').length == 1 ? ls : parseInt(lines.split('-')[1]);
                     for (let k = ls; k <= le; k++) {
-                        var f = Object.assign({}, d);;
+                        var f = Object.assign({}, d);
                         f['Línea'] = k;
                         f['Bloque1'] = 'a';
                         f['Bloque2'] = 'd';
@@ -421,6 +426,7 @@ const BFC = (parameters) => {
         var page__book = self.book[p];
         var page = self.data[p];
         self.hl.selectAll('*').remove();
+        self.data_lines = [];
 
         d3.select('#box').selectAll('.item').remove();
         d3.selectAll('.hl_text').remove();
@@ -722,10 +728,12 @@ const BFC = (parameters) => {
                 ];
             }
 
+            self.data_lines.push(points);
+
             self.g_lines
                 .append('path')
                 .attr('class', 'hl_text')
-                .attr('d', (d) => self.line(points))
+                .attr('d', self.line(points))
                 .attr('fill', 'transparent')
                 .attr('stroke', 'black')
                 .attr('stroke-width', 1.5)
@@ -741,6 +749,27 @@ const BFC = (parameters) => {
 
             self.k += 1;
         }
+
+
+        document.getElementById("wrapper").onscroll = function () {
+            var top = this.scrollTop;
+
+
+            self.g_lines
+                .selectAll('path')
+                .attr('d', (d, i) => {
+                    var pp = [];
+                    self.data_lines[i].forEach(item => {
+                        pp.push({
+                            x: item.x,
+                            y: item.y,
+                        })
+                    });
+                    pp[0].y = self.data_lines[i][0].y - top;
+                    pp[1].y = self.data_lines[i][1].y - top;
+                    return self.line(pp);
+                });
+        };
     };
 
     self.updatePage = (p) => {
