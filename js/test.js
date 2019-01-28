@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 129;
+    let curr_pag = 94;
     // Page
     self.page_height = 400;
     self.page_width = 300;
@@ -187,23 +187,6 @@ const BFC = (parameters) => {
         });
     };
 
-    self.addPie = function (data) {
-        data.forEach(d => {
-            const p = d['Página'];
-            if (self.data[p] == undefined) {
-                self.data[p] = {
-                    'citas': [],
-                    'normativa': [],
-                    'pie': [],
-                    'tablas': [],
-                    'graficos': [],
-                    'bibliografia': [],
-                };
-            }
-            self.data[p]['pie'].push(d);
-        });
-    };
-
     self.addCitas = function (data) {
         data.forEach(d => {
             if (d['Problema']) {
@@ -219,6 +202,47 @@ const BFC = (parameters) => {
                     };
                 }
                 self.data[p]['citas'].push(d);
+            }
+        });
+    };
+
+    self.addPie = function (data) {
+        data.forEach(d => {
+            if (d['Problema']) {
+                const p = d['Página'];
+                var s = parseInt(p.split('-')[0]);
+                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (var j = s; j <= e; j++) {
+                    if (self.data[j] == undefined) {
+                        self.data[j] = {
+                            'citas': [],
+                            'normativa': [],
+                            'pie': [],
+                            'tablas': [],
+                            'graficos': [],
+                            'bibliografia': [],
+                        };
+                    }
+
+                    var lines = d['Línea'].toString();
+                    var bloque = d['Bloque'].split('-');
+                    var ls = parseInt(lines.split('-')[0]);
+                    var le = lines.split('-').length == 1 ? ls : parseInt(lines.split('-')[1]);
+                    for (let k = ls; k <= le; k++) {
+                        var f = Object.assign({}, d);;
+                        f['Línea'] = k;
+                        f['Bloque1'] = 'a';
+                        f['Bloque2'] = 'd';
+                        if (k == ls) {
+                            f['info'] = true;
+                            f['Bloque1'] = bloque[0];
+                        }
+                        if (k == le && bloque.length > 1) {
+                            f['Bloque2'] = bloque[1];
+                        }
+                        self.data[j]['pie'].push(f);
+                    }
+                };
             }
         });
     };
@@ -538,6 +562,67 @@ const BFC = (parameters) => {
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
 
+
+
+        const pie_offset = self.page_height - self.page_padd - page__book.pie * (self.lines_height - 2 + self.lines_padd);
+
+        // Pie
+        self.hl
+            .selectAll('.pie')
+            .data(page.pie)
+            .enter()
+            .append('rect')
+            .attr('class', 'hl pie')
+            .attr('x', d => {
+                let padd_x = 0;
+                const f = (self.page_width - 2 * self.page_padd - 15) / 4;
+                switch (d['Bloque1']) {
+                    case 'a':
+                        padd_x = 0;
+                        break;
+                    case 'b':
+                        padd_x = f;
+                        break;
+                    case 'c':
+                        padd_x = 2 * f;
+                        break;
+                    case 'd':
+                        padd_x = 3 * f;
+                        break;
+                }
+                return self.page_padd + 15 + padd_x;
+            })
+            .attr('y', (d, i) => {
+                var line = parseInt(d['Línea']) - 1;
+                const bar_height = (self.lines_height - 2) + self.lines_padd;
+                return self.page_y + pie_offset + line * (bar_height);
+            })
+            .attr('width', d => {
+                let width_x = 0;
+                const f = (self.page_width - 2 * self.page_padd - 15) / 4;
+                switch (d['Bloque2']) {
+                    case 'a':
+                        width_x = f;
+                        break;
+                    case 'b':
+                        width_x = 2 * f;
+                        break;
+                    case 'c':
+                        width_x = 3 * f;
+                        break;
+                    case 'd':
+                        width_x = 4 * f;
+                        break;
+                }
+                return width_x;
+            })
+            .attr('height', self.lines_height - 2)
+            .style('fill', 'blue')
+            .on('mousemove', d => showTooltip(d))
+            .on('mouseout', d => hideTooltip())
+            .filter(d => d.info)
+            .each(function (d) { renderInfo(this, d); });
+
         // Bibliografía
         padd = self.lines_padd * 2;
         bar_height = (self.page_height - 2 * self.page_padd + padd) / (page__book.contenido) - padd;
@@ -688,5 +773,7 @@ const BFC = (parameters) => {
     bfc.addGraficos(graficos);
     bfc.addBibliografia(bibliografia);
     bfc.addPie(pie);
+
+    console.log(bfc.data)
     bfc.render();
 })();
