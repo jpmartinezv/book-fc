@@ -29,6 +29,8 @@ const BFC = (parameters) => {
 
     self.data_lines = [];
 
+    self.data_dots = {};
+
     self.line = d3.line()
         .x((d) => d.x)
         .y((d) => d.y);
@@ -51,7 +53,7 @@ const BFC = (parameters) => {
         self.g_lines = self.svg.append('g');
 
         self.g_nav = self.svg.append('g')
-            .attr("transform", "translate(" + 10 + ", " + (self.height - 45) + ")")
+            .attr("transform", "translate(" + 10 + ", " + (self.height - 87) + ")")
             .attr('width', self.width - 20)
             .attr('height', 30);
 
@@ -69,12 +71,13 @@ const BFC = (parameters) => {
 
     }
 
-    self.render = (book, normativa, citas) => {
+    self.render = () => {
         /* Page Title */
         self.page_title = self.g_page.append('text')
             .attr('x', self.page_width / 2)
-            .attr('y', 20)
+            .attr('y', 22)
             .attr('text-anchor', 'middle')
+            .style('font-size', '20px')
             .text('Página 1');
 
         // page
@@ -94,7 +97,7 @@ const BFC = (parameters) => {
 
     self.renderNavbar = () => {
         const nav_width = self.width - 20;
-        const nav_height = 32;
+        const nav_height = 70;
         const item_width = nav_width / self.num_pages;
 
         // BG
@@ -102,8 +105,16 @@ const BFC = (parameters) => {
             .attr('x', 0)
             .attr('y', -5)
             .attr('width', nav_width)
-            .attr('height', nav_height + 13)
+            .attr('height', nav_height + 22)
             .attr('fill', '#ddd');
+
+        // BG
+        self.g_nav.append('text')
+            .attr('x', self.width / 2 - 10)
+            .attr('y', 81)
+            .attr('text-anchor', 'middle')
+            .text('Arrastar rectángulo para seleccionar página')
+            .attr('opacity', 0.5);
 
         // Bar
         self.g_nav.append('rect')
@@ -120,6 +131,34 @@ const BFC = (parameters) => {
                 self.marker.attr('x', (page - 1) * item_width);
                 self.updatePage(page);
             });
+
+        const g_dots = self.g_nav.append('g');
+        const dots = [];
+
+        for (const key in self.data_dots) {
+            if (self.data_dots.hasOwnProperty(key)) {
+                const page = self.data_dots[key];
+                page.forEach((item, i) => {
+                    dots.push({
+                        color: item,
+                        page: parseInt(key),
+                        y: i
+                    });
+                })
+            }
+        }
+
+        g_dots.selectAll('.dot')
+            .data(dots)
+            .enter()
+            .append('circle')
+            .attr('class', d => {
+                return 'dot ' + d.color;
+            })
+            .attr('cx', (d) => (d.page - 1) * item_width + item_width / 2)
+            .attr('cy', (d) => 4 + d.y * 5.5)
+            .attr('r', self.flag ? 1.5 : 2.5)
+            .style('pointer-events', 'none');
 
         // Marker
         self.marker = self.g_nav.append('rect')
@@ -196,6 +235,10 @@ const BFC = (parameters) => {
                     };
                 }
                 self.data[p]['normativa'].push(d);
+                if (self.data_dots[p] == undefined) {
+                    self.data_dots[p] = [];
+                }
+                self.data_dots[p].push('color1');
             }
         });
     };
@@ -215,6 +258,10 @@ const BFC = (parameters) => {
                     };
                 }
                 self.data[p]['citas'].push(d);
+                if (self.data_dots[p] == undefined) {
+                    self.data_dots[p] = [];
+                }
+                self.data_dots[p].push('color2');
             }
         });
     };
@@ -255,7 +302,11 @@ const BFC = (parameters) => {
                         }
                         self.data[j]['pie'].push(f);
                     }
-                };
+                }
+                if (self.data_dots[s] == undefined) {
+                    self.data_dots[s] = [];
+                }
+                self.data_dots[s].push('color3');
             }
         });
     };
@@ -278,7 +329,11 @@ const BFC = (parameters) => {
                         };
                     }
                     self.data[j]['tablas'].push(d);
-                };
+                }
+                if (self.data_dots[s] == undefined) {
+                    self.data_dots[s] = [];
+                }
+                self.data_dots[s].push('color4');
             }
         });
     };
@@ -301,7 +356,11 @@ const BFC = (parameters) => {
                         };
                     }
                     self.data[j]['graficos'].push(d);
-                };
+                }
+                if (self.data_dots[s] == undefined) {
+                    self.data_dots[s] = [];
+                }
+                self.data_dots[s].push('color5');
             }
         });
     };
@@ -324,6 +383,11 @@ const BFC = (parameters) => {
                 }
                 d['Línea'] = d['Número'] - nn + 1;
                 self.data[p]['bibliografia'].push(d);
+
+                if (self.data_dots[p] == undefined) {
+                    self.data_dots[p] = [];
+                }
+                self.data_dots[p].push('color6');
             }
         });
     };
@@ -453,7 +517,7 @@ const BFC = (parameters) => {
             .data(page.normativa)
             .enter()
             .append('rect')
-            .attr('class', 'hl normativa')
+            .attr('class', 'hl normativa color1')
             .attr('x', d => {
                 let padd_x = 0;
                 const f = (self.page_width - 2 * self.page_padd) / 4;
@@ -481,7 +545,6 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', '#80172d')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -492,7 +555,7 @@ const BFC = (parameters) => {
             .data(page.citas)
             .enter()
             .append('rect')
-            .attr('class', 'hl cita')
+            .attr('class', 'hl cita color2')
             .attr('x', d => {
                 let padd_x = 0;
                 const f = (self.page_width - 2 * self.page_padd) / 4;
@@ -520,7 +583,6 @@ const BFC = (parameters) => {
             })
             .attr('width', '55')
             .attr('height', self.lines_height)
-            .style('fill', '#00b394')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -533,7 +595,7 @@ const BFC = (parameters) => {
             .data(page.tablas)
             .enter()
             .append('rect')
-            .attr('class', 'hl tabla')
+            .attr('class', 'hl tabla color4')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Bloque'].split('0')[0]) - 1;
@@ -548,7 +610,6 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', '#00b394')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -559,7 +620,7 @@ const BFC = (parameters) => {
             .data(page.graficos)
             .enter()
             .append('rect')
-            .attr('class', 'hl grafico')
+            .attr('class', 'hl grafico color5')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Bloque'].split('0')[0]) - 1;
@@ -574,7 +635,6 @@ const BFC = (parameters) => {
                 var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
-            .style('fill', '#80172d')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -589,7 +649,7 @@ const BFC = (parameters) => {
             .data(page.pie)
             .enter()
             .append('rect')
-            .attr('class', 'hl pie')
+            .attr('class', 'hl pie color3')
             .attr('x', d => {
                 let padd_x = 0;
                 const f = (self.page_width - 2 * self.page_padd - 15) / 4;
@@ -634,7 +694,6 @@ const BFC = (parameters) => {
                 return width_x;
             })
             .attr('height', self.lines_height - 2)
-            .style('fill', '#81b1e2')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .filter(d => d.info)
@@ -650,7 +709,7 @@ const BFC = (parameters) => {
             .data(page.bibliografia)
             .enter()
             .append('rect')
-            .attr('class', 'hl bibliografia')
+            .attr('class', 'hl bibliografia color6')
             .attr('x', self.page_padd)
             .attr('y', d => {
                 var line = parseInt(d['Línea']) - 1;
@@ -661,7 +720,6 @@ const BFC = (parameters) => {
                 return self.page_width - 2 * self.page_padd;
             })
             .attr('height', bar_height)
-            .style('fill', '#81b1e2')
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .each(function (d) { renderInfo(this, d); });
@@ -796,7 +854,7 @@ const BFC = (parameters) => {
     const bfc = BFC({
         parent_id: 'root',
         width: d3.select('#root').node().getBoundingClientRect().width,
-        height: 500,
+        height: 540,
     });
 
     const normativa = await d3.csv("normativa.csv");
@@ -814,6 +872,6 @@ const BFC = (parameters) => {
     bfc.addBibliografia(bibliografia);
     bfc.addPie(pie);
 
-    console.log(bfc.data)
+    console.log(bfc.data_dots)
     bfc.render();
 })();
