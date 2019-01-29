@@ -1,3 +1,5 @@
+// Autor: Jason Martínez (https://twitter.com/json_martinez)
+
 const BFC = (parameters) => {
     const self = {};
 
