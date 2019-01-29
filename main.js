@@ -270,9 +270,9 @@ const BFC = (parameters) => {
         data.forEach(d => {
             if (d['Problema']) {
                 const p = d['Página'];
-                var s = parseInt(p.split('-')[0]);
-                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
-                for (var j = s; j <= e; j++) {
+                let s = parseInt(p.split('-')[0]);
+                let e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (let j = s; j <= e; j++) {
                     if (self.data[j] == undefined) {
                         self.data[j] = {
                             'citas': [],
@@ -284,12 +284,12 @@ const BFC = (parameters) => {
                         };
                     }
 
-                    var lines = d['Línea'].toString();
-                    var bloque = d['Bloque'].split('-');
-                    var ls = parseInt(lines.split('-')[0]);
-                    var le = lines.split('-').length == 1 ? ls : parseInt(lines.split('-')[1]);
+                    let lines = d['Línea'].toString();
+                    let bloque = d['Bloque'].split('-');
+                    let ls = parseInt(lines.split('-')[0]);
+                    let le = lines.split('-').length == 1 ? ls : parseInt(lines.split('-')[1]);
                     for (let k = ls; k <= le; k++) {
-                        var f = Object.assign({}, d);
+                        let f = Object.assign({}, d);
                         f['Línea'] = k;
                         f['Bloque1'] = 'a';
                         f['Bloque2'] = 'd';
@@ -315,9 +315,9 @@ const BFC = (parameters) => {
         data.forEach(d => {
             if (d['Problema']) {
                 const p = d['Página'];
-                var s = parseInt(p.split('-')[0]);
-                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
-                for (var j = s; j <= e; j++) {
+                let s = parseInt(p.split('-')[0]);
+                let e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (let j = s; j <= e; j++) {
                     if (self.data[j] == undefined) {
                         self.data[j] = {
                             'citas': [],
@@ -342,9 +342,9 @@ const BFC = (parameters) => {
         data.forEach(d => {
             if (d['Problema']) {
                 const p = d['Página'];
-                var s = parseInt(p.split('-')[0]);
-                var e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
-                for (var j = s; j <= e; j++) {
+                let s = parseInt(p.split('-')[0]);
+                let e = p.split('-').length == 1 ? s : parseInt(p.split('-')[1]);
+                for (let j = s; j <= e; j++) {
                     if (self.data[j] == undefined) {
                         self.data[j] = {
                             'citas': [],
@@ -366,7 +366,7 @@ const BFC = (parameters) => {
     };
 
     self.addBibliografia = function (data) {
-        var nn = 0;
+        let numero = 0;
         data.forEach(d => {
             if (d['Problema']) {
                 const p = d['Página'];
@@ -379,9 +379,9 @@ const BFC = (parameters) => {
                         'graficos': [],
                         'bibliografia': [],
                     };
-                    nn = d['Número'];
+                    numero = d['Número'];
                 }
-                d['Línea'] = d['Número'] - nn + 1;
+                d['Línea'] = d['Número'] - numero + 1;
                 self.data[p]['bibliografia'].push(d);
 
                 if (self.data_dots[p] == undefined) {
@@ -498,8 +498,8 @@ const BFC = (parameters) => {
     };
 
     self.paint = (p) => {
-        var page__book = self.book[p];
-        var page = self.data[p];
+        let page__book = self.book[p];
+        let page = self.data[p];
         self.hl.selectAll('*').remove();
         self.data_lines = [];
 
@@ -538,7 +538,7 @@ const BFC = (parameters) => {
                 return self.page_padd + padd_x;
             })
             .attr('y', d => {
-                var line = parseInt(d['Línea'].replace('(pie)')) - 1;
+                const line = parseInt(d['Línea'].replace('(pie)')) - 1;
                 const page_offset = self.page_y + self.page_padd;
                 const bar_height = self.lines_height + self.lines_padd;
                 return page_offset + line * (bar_height);
@@ -576,7 +576,7 @@ const BFC = (parameters) => {
                 return self.page_padd + padd_x;
             })
             .attr('y', d => {
-                var line = parseInt(d['Línea'].replace('(pie)')) - 1;
+                const line = parseInt(d['Línea'].replace('(pie)')) - 1;
                 const page_offset = self.page_y + self.page_padd;
                 const bar_height = self.lines_height + self.lines_padd;
                 return page_offset + line * (bar_height);
@@ -598,7 +598,7 @@ const BFC = (parameters) => {
             .attr('class', 'hl tabla color4')
             .attr('x', self.page_padd)
             .attr('y', d => {
-                var line = parseInt(d['Bloque'].split('0')[0]) - 1;
+                const line = parseInt(d['Bloque'].split('0')[0]) - 1;
                 const page_offset = self.page_y + self.page_padd;
                 return page_offset + line * (bar_height + padd);
             })
@@ -606,8 +606,8 @@ const BFC = (parameters) => {
                 return self.page_width - 2 * self.page_padd;
             })
             .attr('height', d => {
-                var s = parseInt(d['Bloque'].split('-')[0]);
-                var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
+                const s = parseInt(d['Bloque'].split('-')[0]);
+                const e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
             .on('mousemove', d => showTooltip(d))
@@ -623,7 +623,7 @@ const BFC = (parameters) => {
             .attr('class', 'hl grafico color5')
             .attr('x', self.page_padd)
             .attr('y', d => {
-                var line = parseInt(d['Bloque'].split('0')[0]) - 1;
+                const line = parseInt(d['Bloque'].split('0')[0]) - 1;
                 const page_offset = self.page_y + self.page_padd;
                 return page_offset + line * (bar_height + padd);
             })
@@ -631,8 +631,8 @@ const BFC = (parameters) => {
                 return self.page_width - 2 * self.page_padd;
             })
             .attr('height', d => {
-                var s = parseInt(d['Bloque'].split('-')[0]);
-                var e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
+                const s = parseInt(d['Bloque'].split('-')[0]);
+                const e = d['Bloque'].split('-').length == 1 ? s : parseInt(d['Bloque'].split('-')[1]);
                 return s - e == 0 ? bar_height : (2 * bar_height + padd);
             })
             .on('mousemove', d => showTooltip(d))
@@ -670,7 +670,7 @@ const BFC = (parameters) => {
                 return self.page_padd + 15 + padd_x;
             })
             .attr('y', (d, i) => {
-                var line = parseInt(d['Línea']) - 1;
+                const line = parseInt(d['Línea']) - 1;
                 const bar_height = (self.lines_height - 2) + self.lines_padd;
                 return self.page_y + pie_offset + line * (bar_height);
             })
@@ -712,7 +712,7 @@ const BFC = (parameters) => {
             .attr('class', 'hl bibliografia color6')
             .attr('x', self.page_padd)
             .attr('y', d => {
-                var line = parseInt(d['Línea']) - 1;
+                const line = parseInt(d['Línea']) - 1;
                 const page_offset = self.page_y + self.page_padd;
                 return page_offset + line * (bar_height + padd);
             })
@@ -757,7 +757,7 @@ const BFC = (parameters) => {
             const px = self.k % 2 == 0 ? 10 : self.width - 340;
             const py = self.k % 2 == 0 ? self.y1 : self.y2;
 
-            var item = d3.select('#box')
+            const item = d3.select('#box')
                 .append('div')
                 .attr('class', 'item')
                 .style('left', px + 'px')
@@ -767,8 +767,10 @@ const BFC = (parameters) => {
                     '<b>Problema:</b><br>' + d.Problema + '<br>'
                 );
 
+            let points = [];
+
             if (self.k % 2 == 0) {
-                var points = [{
+                points = [{
                     x: px + 330,
                     y: py
                 },
@@ -782,7 +784,7 @@ const BFC = (parameters) => {
                 }
                 ];
             } else {
-                var points = [{
+                points = [{
                     x: px,
                     y: py
                 },
@@ -808,7 +810,7 @@ const BFC = (parameters) => {
                 .attr('stroke-width', 1.5)
                 .attr('marker-end', 'url(#arrow)');
 
-            var h = item.node().getBoundingClientRect().height;
+            const h = item.node().getBoundingClientRect().height;
 
             if (self.k % 2 == 0) {
                 self.y1 += (h + 10);
@@ -821,22 +823,21 @@ const BFC = (parameters) => {
 
 
         document.getElementById("wrapper").onscroll = function () {
-            var top = this.scrollTop;
-
+            const top = this.scrollTop;
 
             self.g_lines
                 .selectAll('path')
                 .attr('d', (d, i) => {
-                    var pp = [];
+                    const new_points = [];
                     self.data_lines[i].forEach(item => {
-                        pp.push({
+                        new_points.push({
                             x: item.x,
                             y: item.y,
                         })
                     });
-                    pp[0].y = self.data_lines[i][0].y - top;
-                    pp[1].y = self.data_lines[i][1].y - top;
-                    return self.line(pp);
+                    new_points[0].y = self.data_lines[i][0].y - top;
+                    new_points[1].y = self.data_lines[i][1].y - top;
+                    return self.line(new_points);
                 });
         };
     };
@@ -857,6 +858,7 @@ const BFC = (parameters) => {
         height: 540,
     });
 
+    // Cargar data
     const book = await d3.csv("data/libro.csv");
     const normativa = await d3.csv("data/normativa.csv");
     const citas = await d3.csv("data/citas.csv");
@@ -864,6 +866,8 @@ const BFC = (parameters) => {
     const pie = await d3.csv("data/pie.csv");
     const graficos = await d3.csv("data/graficos.csv");
     const bibliografia = await d3.csv("data/bibliografia.csv");
+
+    // Add data
     bfc.prepareBook(book);
     bfc.addNormativa(normativa);
     bfc.addCitas(citas);
@@ -871,5 +875,7 @@ const BFC = (parameters) => {
     bfc.addGraficos(graficos);
     bfc.addBibliografia(bibliografia);
     bfc.addPie(pie);
+
+    // Render
     bfc.render();
 })();
