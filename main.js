@@ -857,13 +857,13 @@ const BFC = (parameters) => {
         height: 540,
     });
 
-    const normativa = await d3.csv("normativa.csv");
-    const citas = await d3.csv("citas.csv");
-    const book = await d3.csv("libro.csv");
-    const tablas = await d3.csv("tablas.csv");
-    const graficos = await d3.csv("graficos.csv");
-    const bibliografia = await d3.csv("bibliografia.csv");
-    const pie = await d3.csv("pie.csv");
+    const book = await d3.csv("data/libro.csv");
+    const normativa = await d3.csv("data/normativa.csv");
+    const citas = await d3.csv("data/citas.csv");
+    const tablas = await d3.csv("data/tablas.csv");
+    const pie = await d3.csv("data/pie.csv");
+    const graficos = await d3.csv("data/graficos.csv");
+    const bibliografia = await d3.csv("data/bibliografia.csv");
     bfc.prepareBook(book);
     bfc.addNormativa(normativa);
     bfc.addCitas(citas);
@@ -871,7 +871,5 @@ const BFC = (parameters) => {
     bfc.addGraficos(graficos);
     bfc.addBibliografia(bibliografia);
     bfc.addPie(pie);
-
-    console.log(bfc.data_dots)
     bfc.render();
 })();
