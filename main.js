@@ -7,7 +7,7 @@ const BFC = (parameters) => {
 
     self.parent_select = '#' + self.parent_id;
     // Initial
-    let curr_pag = 169;
+    let curr_pag = 92;
     // Page
     self.page_height = 400;
     self.page_width = 300;
