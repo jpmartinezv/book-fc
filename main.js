@@ -1,6 +1,6 @@
 // Autor: Jason Martínez (https://twitter.com/json_martinez)
 
-const BFC = (parameters) => {
+const BookViz = (parameters) => {
     const self = {};
 
     for (let key in parameters) {
@@ -857,7 +857,7 @@ const BFC = (parameters) => {
 }
 
 (async () => {
-    const bfc = BFC({
+    const book_viz = BookViz({
         parent_id: 'root',
         width: d3.select('#root').node().getBoundingClientRect().width,
         height: 540,
@@ -873,14 +873,14 @@ const BFC = (parameters) => {
     const bibliografia = await d3.csv("data/bibliografia.csv");
 
     // Add data
-    bfc.prepareBook(book);
-    bfc.addNormativa(normativa);
-    bfc.addCitas(citas);
-    bfc.addTablas(tablas);
-    bfc.addGraficos(graficos);
-    bfc.addBibliografia(bibliografia);
-    bfc.addPie(pie);
+    book_viz.prepareBook(book);
+    book_viz.addNormativa(normativa);
+    book_viz.addCitas(citas);
+    book_viz.addTablas(tablas);
+    book_viz.addGraficos(graficos);
+    book_viz.addBibliografia(bibliografia);
+    book_viz.addPie(pie);
 
     // Render
-    bfc.render();
+    book_viz.render();
 })();
