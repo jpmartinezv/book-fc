@@ -15,7 +15,7 @@ const BFC = (parameters) => {
     self.page_width = 300;
     self.page_padd = 10;
     self.page_x = (self.width - self.page_width) / 2;
-    self.page_y = 15;
+    self.page_y = 10;
     // Line
     self.lines_n = 34;
     self.lines_padd = 3;
@@ -77,7 +77,7 @@ const BFC = (parameters) => {
         /* Page Title */
         self.page_title = self.g_page.append('text')
             .attr('x', self.page_width / 2)
-            .attr('y', 22)
+            .attr('y', 435)
             .attr('text-anchor', 'middle')
             .attr('class', 'numero-pagina')
             .text('Página 1');
@@ -131,7 +131,7 @@ const BFC = (parameters) => {
                 const coords = d3.mouse(this);
                 const x = coords[0];
                 const page = Math.ceil(x / item_width);
-                self.marker.attr('x', (page - 1 - padd_page) * item_width);
+                self.marker.attr('x', (page - 1) * item_width);
                 self.updatePage(page + padd_page);
             });
 
