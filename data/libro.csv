@@ -1,4 +1,6 @@
 ﻿Página,Contenido,Pie,Tipo
+11,25,5,Contenido
+15,25,0,Contenido
 21,25,0,Contenido
 22,34,0,Contenido
 23,33,0,Contenido
@@ -135,7 +137,7 @@
 154,1,0,Tabla
 155,1,0,Tabla
 156,1,0,Tabla
-157,1,,Tabla
+157,1,0,Tabla
 158,1,0,Tabla
 159,1,0,Tabla
 160,2,0,Gráfico

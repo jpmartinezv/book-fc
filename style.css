@@ -4,7 +4,7 @@
 
 html {
     font-family: 'Markazi Text', serif;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 body {
@@ -24,32 +24,35 @@ body {
     padding: 0;
     margin: 7px 0;
     text-align: right;
+    font-size: 13px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .leyenda .label {
-    display: inline;
+    display: inline-block;
     margin-right: 10px;
 }
 
-.leyenda li {
+.leyenda .item {
     margin: 0;
     padding: 0;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     margin-right: 10px;
 }
 
-.leyenda li span {
+.leyenda .item span {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     margin-right: 2px;
     vertical-align: middle;
+    margin-top: -2px;
 }
 
 .color1 {
-    background-color: #80172d;
-    fill: #80172d;
+    background-color: #fee08b;
+    fill: #fee08b;
 }
 
 .color2 {
@@ -58,23 +61,35 @@ body {
 }
 
 .color3 {
-    background-color: #81b1e2;
-    fill: #81b1e2;
+    background-color: #e78ac3;
+    fill: #e78ac3;
 }
 
 .color4 {
-    background-color: #ef8a62;
-    fill: #ef8a62;
+    background-color: #a65628;
+    fill: #a65628;
 }
 
 .color5 {
-    background-color: #386cb0;
-    fill: #386cb0;
+    background-color: #8da0cb;
+    fill: #8da0cb;
 }
 
 .color6 {
-    background-color: #fee08b;
-    fill: #fee08b;
+    background-color: #fc8d62;
+    fill: #fc8d62;
+}
+
+.indicacion {
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    color: #424242;
+}
+
+.numero-pagina {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 /* Main */
@@ -111,6 +126,25 @@ body {
     overflow: hidden;
 }
 
+#box .item .label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    color: #1a1a1a;
+}
+
+#box .item .fragmento {
+    font-style: italic;
+    margin-bottom: 10px;
+    color: #424242;
+    overflow: hidden;
+}
+
+#box .item .fragmento span {
+    background-color: #fee0d2;
+}
+
 .hl {
     cursor: pointer;
 }
@@ -120,9 +154,9 @@ body {
     position: absolute;
     padding: 7px;
     border-radius: 3px;
-    background-color: #000;
-    background-color: hsla(0, 0%, 12%, 0.9);
-    color: #fff;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    color: #1a1a1a;
     font-size: 16px;
     font-weight: 300;
     line-height: 1.1;
@@ -131,6 +165,7 @@ body {
     pointer-events: none;
     display: none;
     width: 90%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
 .tooltip .triangle {
@@ -139,14 +174,32 @@ body {
     left: 50%;
     margin-left: -5px;
     width: 0;
-    border-bottom: 5px solid #000;
-    border-bottom: 5px solid hsla(0, 0%, 12%, 0.9);
+    border-bottom: 5px solid #ffffff;
     border-right: 5px solid transparent;
     border-left: 5px solid transparent;
     content: " ";
     font-size: 0;
     line-height: 0;
     z-index: 1000;
+}
+
+.tooltip .label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    color: #1a1a1a;
+}
+
+.tooltip .fragmento {
+    font-style: italic;
+    margin-bottom: 10px;
+    color: #424242;
+    overflow: hidden;
+}
+
+.tooltip .fragmento span {
+    background-color: #fee0d2;
 }
 
 @media only screen and (max-width: 500px) {

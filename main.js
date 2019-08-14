@@ -15,7 +15,7 @@ const BFC = (parameters) => {
     self.page_width = 300;
     self.page_padd = 10;
     self.page_x = (self.width - self.page_width) / 2;
-    self.page_y = 35;
+    self.page_y = 15;
     // Line
     self.lines_n = 34;
     self.lines_padd = 3;
@@ -79,7 +79,7 @@ const BFC = (parameters) => {
             .attr('x', self.page_width / 2)
             .attr('y', 22)
             .attr('text-anchor', 'middle')
-            .style('font-size', '20px')
+            .attr('class', 'numero-pagina')
             .text('Página 1');
 
         // page
@@ -98,9 +98,10 @@ const BFC = (parameters) => {
     }
 
     self.renderNavbar = () => {
+        const padd_page = 23;
         const nav_width = self.width - 20;
         const nav_height = 70;
-        const item_width = nav_width / self.num_pages;
+        const item_width = nav_width / (self.num_pages - padd_page);
 
         // BG
         self.g_nav.append('rect')
@@ -113,10 +114,10 @@ const BFC = (parameters) => {
         // BG
         self.g_nav.append('text')
             .attr('x', self.width / 2 - 10)
-            .attr('y', 81)
+            .attr('y', 82)
             .attr('text-anchor', 'middle')
-            .text('Arrastar rectángulo para seleccionar página')
-            .attr('opacity', 0.5);
+            .attr('class', 'indicacion')
+            .text('Arrastra el rectángulo para seleccionar una página.');
 
         // Bar
         self.g_nav.append('rect')
@@ -124,14 +125,14 @@ const BFC = (parameters) => {
             .attr('y', 0)
             .attr('width', nav_width)
             .attr('height', nav_height)
-            .attr('fill', '#fff')
+            .attr('fill', '#2d2d2d')
             .style('cursor', 'pointer')
             .on('click', function () {
                 const coords = d3.mouse(this);
                 const x = coords[0];
                 const page = Math.ceil(x / item_width);
-                self.marker.attr('x', (page - 1) * item_width);
-                self.updatePage(page);
+                self.marker.attr('x', (page - 1 - padd_page) * item_width);
+                self.updatePage(page + padd_page);
             });
 
         const g_dots = self.g_nav.append('g');
@@ -157,19 +158,19 @@ const BFC = (parameters) => {
             .attr('class', d => {
                 return 'dot ' + d.color;
             })
-            .attr('cx', (d) => (d.page - 1) * item_width + item_width / 2)
-            .attr('cy', (d) => 4 + d.y * 5.5)
+            .attr('cx', (d) => (d.page - 1 - padd_page) * item_width + item_width / 2)
+            .attr('cy', (d) => 4 + d.y * 6)
             .attr('r', self.flag ? 1.5 : 2.5)
             .style('pointer-events', 'none');
 
         // Marker
         self.marker = self.g_nav.append('rect')
-            .attr('x', (curr_pag - 1) * item_width)
-            .attr('y', -5)
+            .attr('x', (curr_pag - 1 - padd_page) * item_width)
+            .attr('y', -1)
             .attr('width', item_width)
-            .attr('height', nav_height + 10)
+            .attr('height', nav_height + 2)
             .attr('fill', 'transparent')
-            .attr('stroke', 'rgba(0,0,0,0.75)')
+            .attr('stroke', '#d73027')
             .attr('stroke-width', 3)
             .style('cursor', 'pointer')
             .call(d3.drag()
@@ -193,7 +194,7 @@ const BFC = (parameters) => {
                     x = x > nav_width - item_width ? nav_width - item_width : x;
 
                     const page = Math.ceil(x / item_width) + 1;
-                    self.updatePage(page);
+                    self.updatePage(page + padd_page);
                     return (page - 1) * item_width;
                 });
         }
@@ -414,7 +415,8 @@ const BFC = (parameters) => {
                 .append('rect')
                 .attr('class', (d, i) => 'line line-' + i)
                 .attr('x', (d, i) => {
-                    const x = i % 10 == 0 ? 20 : 0;
+                    // const x = i % 10 == 0 ? 20 : 0;
+                    const x = 0;
                     return x + self.page_padd;
                 })
                 .attr('y', (d, i) => {
@@ -424,7 +426,8 @@ const BFC = (parameters) => {
                     return page_offset + i * (bar_height);
                 })
                 .attr('width', (d, i) => {
-                    const x = i % 10 == 0 ? 20 : 0;
+                    // const x = i % 10 == 0 ? 20 : 0;
+                    const x = 0;
                     return self.page_width - 2 * self.page_padd - x;
                 })
                 .attr('height', self.lines_height)
@@ -444,7 +447,7 @@ const BFC = (parameters) => {
                     return self.page_y + pie_offset + i * (bar_height);
                 })
                 .attr('width', self.page_width - 2 * self.page_padd - 15)
-                .attr('height', self.lines_height - 2)
+                .attr('height', self.lines_height - 3)
                 .style('fill', '#bbbbbb');
         }
 
@@ -695,7 +698,7 @@ const BFC = (parameters) => {
                 }
                 return width_x;
             })
-            .attr('height', self.lines_height - 2)
+            .attr('height', self.lines_height - 3)
             .on('mousemove', d => showTooltip(d))
             .on('mouseout', d => hideTooltip())
             .filter(d => d.info)
@@ -739,8 +742,8 @@ const BFC = (parameters) => {
                 .style('display', 'block')
                 .select('.content')
                 .html(
-                    '<b>Fragmento</b>:<br> ' + d['Fragmento'] + '<br><br>' +
-                    '<b>Problema</b>:<br> ' + d['Problema']
+                    '<div class="label">Fragmento:</div><div class="fragmento"><span>"' + d.Fragmento + '"</span></div>' +
+                    '<div class="label">Problema:</div><div class="problema">' + d.Problema + '.</div>'
                 );
 
             tooltip
@@ -763,10 +766,10 @@ const BFC = (parameters) => {
                 .append('div')
                 .attr('class', 'item')
                 .style('left', px + 'px')
-                .style('top', py + 'px')
+                .style('top', (py - 1) + 'px')
                 .html(
-                    '<b>Fragmento:</b><br>' + d.Fragmento + '<br><br>' +
-                    '<b>Problema:</b><br>' + d.Problema + '<br>'
+                    '<div class="label">Fragmento:</div><div class="fragmento"><span>"' + d.Fragmento + '"</span></div>' +
+                    '<div class="label">Problema:</div><div class="problema">' + d.Problema + '.</div>'
                 );
 
             let points = [];
