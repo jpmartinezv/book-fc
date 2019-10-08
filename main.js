@@ -769,7 +769,7 @@ const BookViz = (parameters) => {
                 .style('top', (py - 1) + 'px')
                 .html(
                     '<div class="label">Fragmento:</div><div class="fragmento"><span>"' + d.Fragmento + '"</span></div>' +
-                    '<div class="label">Problema:</div><div class="problema">' + d.Problema + '.</div>'
+                    '<div class="label">Problema:</div><div class="problema">' + d.Problema + '</div>'
                 );
 
             let points = [];
