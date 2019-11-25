@@ -742,7 +742,7 @@ const BookViz = (parameters) => {
                 .style('display', 'block')
                 .select('.content')
                 .html(
-                    '<div class="label">Fragmento:</div><div class="fragmento"><span>"' + d.Fragmento + '"</span></div>' +
+                    '<div class="label">Fragmento:</div><div class="fragmento"><span>' + d.Fragmento + '</span></div>' +
                     '<div class="label">Problema:</div><div class="problema">' + d.Problema + '.</div>'
                 );
 
@@ -768,7 +768,7 @@ const BookViz = (parameters) => {
                 .style('left', px + 'px')
                 .style('top', (py - 1) + 'px')
                 .html(
-                    '<div class="label">Fragmento:</div><div class="fragmento"><span>"' + d.Fragmento + '"</span></div>' +
+                    '<div class="label">Fragmento:</div><div class="fragmento"><span>' + d.Fragmento + '</span></div>' +
                     '<div class="label">Problema:</div><div class="problema">' + d.Problema + '</div>'
                 );
 
