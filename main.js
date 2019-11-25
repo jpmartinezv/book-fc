@@ -12,7 +12,7 @@ const BookViz = (parameters) => {
     let curr_pag = 92;
     // Page
     self.page_height = 400;
-    self.page_width = 300;
+    self.page_width = 320;
     self.page_padd = 10;
     self.page_x = (self.width - self.page_width) / 2;
     self.page_y = 10;
