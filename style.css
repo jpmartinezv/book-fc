@@ -97,8 +97,7 @@ body {
 #root {
     background-color: #dddddd;
     position: relative;
-    width: 100%;
-    max-width: 1200px;
+    width: 1100px;
     height: 540px;
     margin: 0 auto;
 }
